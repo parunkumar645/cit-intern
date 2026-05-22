@@ -1,49 +1,97 @@
-const users = require('../models/usermodel');
+const User = require('../models/userModel')
 
-// create 
 
-const createUser = (req , res ) => {
-    users.push(req.body);
-    res.status(201).json({
-        message : "User Created",
-        data : users
-    })
+// CREATE USER
+const createUser = async (req, res) => {
+
+    try {
+
+        const user = await User.create(req.body)
+
+        res.status(201).json({
+            message: 'User Added Successfully',
+            user
+        })
+
+    } catch (error) {
+
+        res.status(500).json({
+            message: error.message
+        })
+    }
 }
 
-// get user 
-const getUser = (req , res ) => {
-    
-    res.status(201).json({
-        message : "User Retrieved",
-        data : users
-    })
+
+// GET USERS
+const getUsers = async (req, res) => {
+
+    try {
+
+        const users = await User.find()
+
+        res.status(200).json(users)
+
+    } catch (error) {
+
+        res.status(500).json({
+            message: error.message
+        })
+    }
 }
 
-// update user
-const updateUser = (req , res ) => {
-    const id = req.params.id
-    users[id] = req.body;
-    
-    res.json({
-        message : "User Updated",
-        data : users
-    })
+
+// UPDATE USER
+const updateUser = async (req, res) => {
+
+    try {
+
+        const id = req.params.id
+
+        const updatedUser = await User.findByIdAndUpdate(
+            id,
+            req.body,
+            { new: true }
+        )
+
+        res.status(200).json({
+            message: 'User Updated Successfully',
+            updatedUser
+        })
+
+    } catch (error) {
+
+        res.status(500).json({
+            message: error.message
+        })
+    }
 }
 
-// delete user
-const deleteUser = (req , res ) => {
-    const id = req.params.id; 
-    users.splice(id,1);
-    
-    res.json({
-        message : "User DELETED",
-        users
-    })
+
+// DELETE USER
+const deleteUser = async (req, res) => {
+
+    try {
+
+        const id = req.params.id
+
+        await User.findByIdAndDelete(id)
+
+        res.status(200).json({
+            message: 'User Deleted Successfully'
+        })
+
+    } catch (error) {
+
+        res.status(500).json({
+            message: error.message
+        })
+    }
 }
+
 
 module.exports = {
     createUser,
-    getUser,
+    getUsers,
     updateUser,
     deleteUser
 }
